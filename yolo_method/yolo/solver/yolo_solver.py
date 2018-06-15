@@ -9,7 +9,7 @@ import sys
 import time
 from datetime import datetime
 
-from yolo.solver.solver import Solver
+from yolo_method.yolo.solver.solver import Solver
 
 class YoloSolver(Solver):
   """Yolo Solver 
@@ -59,8 +59,10 @@ class YoloSolver(Solver):
     self.objects_num = tf.placeholder(tf.int32, (self.batch_size))
 
     self.predicts = self.net.inference(self.images)
-    self.total_loss, self.nilboy = self.net.loss(self.predicts, self.labels, self.objects_num)
-    
+    self.total_loss, self.nilboy,lists = self.net.loss(self.predicts, self.labels, self.objects_num)
+
+    print(lists)
+
     tf.summary.scalar('loss', self.total_loss)
     self.train_op = self._train()
 
@@ -85,7 +87,10 @@ class YoloSolver(Solver):
       start_time = time.time()
       np_images, np_labels, np_objects_num = self.dataset.batch()
 
+      # _, loss_value, nilboy = sess.run([self.train_op, self.total_loss, self.nilboy], feed_dict={self.images: np_images, self.labels: np_labels, self.objects_num: np_objects_num})
       _, loss_value, nilboy = sess.run([self.train_op, self.total_loss, self.nilboy], feed_dict={self.images: np_images, self.labels: np_labels, self.objects_num: np_objects_num})
+
+
       #loss_value, nilboy = sess.run([self.total_loss, self.nilboy], feed_dict={self.images: np_images, self.labels: np_labels, self.objects_num: np_objects_num})
 
 

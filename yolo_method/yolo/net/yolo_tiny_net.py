@@ -6,7 +6,7 @@ import tensorflow as tf
 import numpy as np
 import re
 
-from yolo.net.net import Net 
+from yolo_method.yolo.net.net import Net
 
 class YoloTinyNet(Net):
 
@@ -273,8 +273,33 @@ class YoloTinyNet(Net):
 
     return num + 1, object_num, [loss[0] + class_loss, loss[1] + object_loss, loss[2] + noobject_loss, loss[3] + coord_loss], predict, labels, nilboy
 
+  def boxVisual(self, num, object_num, loss, predict, labels, nilboy):
+    """
+    calculate loss
+    Args:
+      predict: 3-D tensor [cell_size, cell_size, 5 * boxes_per_cell]
+      labels : [max_objects, 5]  (x_center, y_center, w, h, class)
+    """
+    label = labels[num:num+1, :]
+    label = tf.reshape(label, [-1])
 
+    #calculate objects  tensor [CELL_SIZE, CELL_SIZE]
+    min_x = (label[0] - label[2] / 2) / (self.image_size / self.cell_size)
+    max_x = (label[0] + label[2] / 2) / (self.image_size / self.cell_size)
 
+    min_y = (label[1] - label[3] / 2) / (self.image_size / self.cell_size)
+    max_y = (label[1] + label[3] / 2) / (self.image_size / self.cell_size)
+
+    min_x = tf.floor(min_x)
+    min_y = tf.floor(min_y)
+
+    max_x = tf.ceil(max_x)
+    max_y = tf.ceil(max_y)
+    return min_x,min_y,max_x,max_y
+  def vis(self):
+
+    min_x, min_y, max_x, max_y=self.boxVisual()
+    return min_x,min_y,max_x,max_y
   def loss(self, predicts, labels, objects_num):
     """Add Loss to all the trainable variables
 
@@ -289,12 +314,19 @@ class YoloTinyNet(Net):
     noobject_loss = tf.constant(0, tf.float32)
     coord_loss = tf.constant(0, tf.float32)
     loss = [0, 0, 0, 0]
+
+    lists=list()
+
     for i in range(self.batch_size):
       predict = predicts[i, :, :, :]
       label = labels[i, :, :]
       object_num = objects_num[i]
       nilboy = tf.ones([7,7,2])
       tuple_results = tf.while_loop(self.cond1, self.body1, [tf.constant(0), object_num, [class_loss, object_loss, noobject_loss, coord_loss], predict, label, nilboy])
+
+      # x1,y1,x2,y2=self.vis()
+      # lists.append(x1+ ' '+y1 +' '+x2+ ' '+y2 )
+
       for j in range(4):
         loss[j] = loss[j] + tuple_results[2][j]
       nilboy = tuple_results[5]
@@ -307,4 +339,4 @@ class YoloTinyNet(Net):
     tf.summary.scalar('coord_loss', loss[3]/self.batch_size)
     tf.summary.scalar('weight_loss', tf.add_n(tf.get_collection('losses')) - (loss[0] + loss[1] + loss[2] + loss[3])/self.batch_size )
 
-    return tf.add_n(tf.get_collection('losses'), name='total_loss'), nilboy
+    return tf.add_n(tf.get_collection('losses'), name='total_loss'), nilboy,lists

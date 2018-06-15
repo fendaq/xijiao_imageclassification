@@ -3,13 +3,13 @@ from optparse import OptionParser
 
 sys.path.append('./')
 
-import yolo
-from yolo.utils.process_config import process_config
+import yolo_method.yolo
+from yolo_method.yolo.utils.process_config import process_config
 
 parser = OptionParser()
 parser.add_option("-c", "--conf", dest="configure",  
                   help="configure filename")
-(options, args) = parser.parse_args() 
+(options, args) = parser.parse_args(['-c','d:/Git/xijiao_imageclassification/yolo_method/conf/train.cfg'])
 if options.configure:
   conf_file = str(options.configure)
 else:

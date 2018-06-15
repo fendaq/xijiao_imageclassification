@@ -6,7 +6,7 @@ import tensorflow as tf
 import numpy as np
 import re
 
-from yolo.net.net import Net 
+from yolo_method.yolo.net.net import Net
 
 class YoloNet(Net):
 

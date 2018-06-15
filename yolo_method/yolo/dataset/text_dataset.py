@@ -10,7 +10,7 @@ import numpy as np
 from queue import Queue 
 from threading import Thread
 
-from yolo.dataset.dataset import DataSet 
+from yolo_method.yolo.dataset.dataset import DataSet
 
 class TextDataSet(DataSet):
   """TextDataSet
