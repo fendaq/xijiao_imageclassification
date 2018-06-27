@@ -13,3 +13,4 @@
 9. [Spatial Transformer Networks](https://arxiv.org/abs/1506.02025) (original)
 9. [An end-to-end TextSpotter with Explicit Alignment and Attention](https://arxiv.org/abs/1803.03474).[github](https://github.com/tonghe90/textspotter)  
 10. [PixelLink: Detecting Scene Text via Instance Segmentation](https://arxiv.org/abs/1801.01315).[github](https://github.com/ZJULearning/pixel_link)   
+11. [CRNN](https://github.com/AKSHAYUBHAT/DeepVideoAnalytics/tree/master/docs/experiments/ocr)   
